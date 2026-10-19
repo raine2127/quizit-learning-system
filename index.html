@@ -1,0 +1,724 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QuizIt - Learning System</title>
+<style>
+:root {
+  --purple: #6546c7;
+  --purple-dark: #49309a;
+  --yellow: #ffdc66;
+  --bg: #f6f5fa;
+  --text: #28243a;
+  --muted: #777488;
+  --white: #ffffff;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+header {
+  background: white;
+  border-bottom: 1px solid #e8e5ef;
+  padding: 15px 6%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.logo { font-size: 25px; font-weight: 800; color: var(--purple); }
+.logo span { color: #e6a900; }
+nav { display: flex; gap: 7px; flex-wrap: wrap; }
+button, input, select {
+  font: inherit;
+}
+button {
+  cursor: pointer;
+  border: 0;
+  border-radius: 9px;
+  padding: 11px 16px;
+  font-weight: 700;
+}
+nav button { background: transparent; color: #5e5a70; }
+nav button:hover, nav button.active { background: #eee9ff; color: var(--purple); }
+.primary { background: var(--purple); color: white; }
+.primary:hover { background: var(--purple-dark); }
+.yellow { background: var(--yellow); color: #392d00; }
+.outline { background: white; border: 1px solid #ddd8e9; }
+main { max-width: 1050px; margin: 35px auto; padding: 0 20px 50px; }
+.hero {
+  background: var(--purple);
+  color: white;
+  padding: 38px;
+  border-radius: 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.hero h1 { font-size: clamp(30px, 5vw, 46px); margin: 10px 0; }
+.hero p { line-height: 1.7; max-width: 490px; color: #eee8ff; }
+.hero .tag {
+  display: inline-block;
+  background: var(--yellow);
+  color: #473800;
+  border-radius: 20px;
+  padding: 7px 12px;
+  font-size: 12px;
+  font-weight: bold;
+}
+.hero-art { font-size: 75px; padding: 15px; }
+.section-title { margin: 32px 0 15px; }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 17px;
+}
+.card {
+  background: white;
+  border: 1px solid #e9e6f0;
+  border-radius: 14px;
+  padding: 22px;
+}
+.card h3 { margin-top: 7px; }
+.card p, .muted { color: var(--muted); line-height: 1.6; }
+.card-icon { font-size: 28px; }
+.panel {
+  background: white;
+  border: 1px solid #e6e2ee;
+  border-radius: 14px;
+  padding: 25px;
+  margin-top: 20px;
+}
+label { display: block; font-weight: bold; margin: 16px 0 7px; }
+input, select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #d9d5e3;
+  border-radius: 8px;
+  background: white;
+  color: var(--text);
+}
+input:focus, select:focus {
+  outline: 2px solid #c8baff;
+  border-color: var(--purple);
+}
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.question-box {
+  border: 1px solid #e7e2f0;
+  background: #fbfaff;
+  border-radius: 10px;
+  padding: 17px;
+  margin-top: 15px;
+}
+.question-box h4 { margin: 0 0 8px; }
+.answer {
+  display: block;
+  text-align: left;
+  width: 100%;
+  margin: 10px 0;
+  background: #f3f0fb;
+  color: var(--text);
+  border: 2px solid transparent;
+}
+.answer:hover { border-color: var(--purple); }
+.answer:disabled { cursor: default; opacity: 1; }
+.answer.correct { background: #e0f6e8; border-color: #299657; }
+.answer.wrong { background: #ffebeb; border-color: #d64b4b; }
+.badge {
+  display: inline-block;
+  background: #eee9ff;
+  color: var(--purple);
+  border-radius: 6px;
+  padding: 5px 9px;
+  font-size: 12px;
+  font-weight: bold;
+}
+.notice {
+  padding: 13px;
+  border-radius: 8px;
+  background: #fff6d8;
+  margin: 15px 0;
+  line-height: 1.5;
+}
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+hr { border: 0; border-top: 1px solid #eeeaf4; margin: 20px 0; }
+footer { text-align: center; padding: 25px; color: var(--muted); font-size: 13px; }
+.hidden { display: none !important; }
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: 12px 8px; text-align: left; border-bottom: 1px solid #eeeaf4; }
+th { color: var(--muted); font-size: 13px; }
+@media(max-width: 560px) {
+  header { padding: 14px 18px; }
+  main { margin-top: 20px; padding: 0 14px 35px; }
+  .hero { padding: 25px; }
+  .hero-art { display: none; }
+  .form-grid { grid-template-columns: 1fr; }
+  .panel { padding: 18px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Quiz<span>It</span>.</div>
+  <nav>
+    <button class="active" data-page="home">Home</button>
+    <button data-page="student">Join Quiz</button>
+    <button data-page="teacher">Teacher</button>
+    <button data-page="admin">Admin</button>
+  </nav>
+</header>
+
+<main>
+  <section id="home" class="page">
+    <div class="hero">
+      <div>
+        <span class="tag">LEARN. PLAY. IMPROVE.</span>
+        <h1>Make learning<br>more fun.</h1>
+        <p>Review your lessons, answer interactive questions, and challenge yourself. Learning doesn't have to be boring.</p>
+        <button class="yellow" onclick="showPage('student')">Join a quiz →</button>
+      </div>
+      <div class="hero-art">💡</div>
+    </div>
+
+    <h2 class="section-title">What do you want to do?</h2>
+    <div class="grid">
+      <div class="card">
+        <div class="card-icon">🎮</div>
+        <h3>Join a quiz</h3>
+        <p>Enter your name and the quiz code from your teacher.</p>
+        <button class="primary" onclick="showPage('student')">Join now</button>
+      </div>
+      <div class="card">
+        <div class="card-icon">📝</div>
+        <h3>Create a quiz</h3>
+        <p>Prepare questions and answer choices for your class.</p>
+        <button class="outline" onclick="showPage('teacher')">Teacher area</button>
+      </div>
+      <div class="card">
+        <div class="card-icon">🏆</div>
+        <h3>Check your score</h3>
+        <p>See your results after completing a quiz.</p>
+        <button class="outline" onclick="showPage('student')">Get started</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="row">
+        <div>
+          <h2 style="margin-bottom:5px">Ready to try it?</h2>
+          <p class="muted">Try the sample quiz with the code below.</p>
+        </div>
+        <span class="badge">DEMO CODE: QUIZ01</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="student" class="page hidden">
+    <h1>Join a quiz</h1>
+    <p class="muted">Ask your teacher for the quiz code before joining.</p>
+    <div class="panel" id="join-panel">
+      <form id="join-form">
+        <label for="student-name">Your display name</label>
+        <input id="student-name" required maxlength="30" placeholder="e.g. Aira">
+
+        <label for="join-code">Quiz code</label>
+        <input id="join-code" required maxlength="12" placeholder="e.g. QUIZ01" style="text-transform:uppercase">
+
+        <button class="primary" type="submit" style="margin-top:18px">Enter quiz →</button>
+      </form>
+    </div>
+    <div id="quiz-area" class="panel hidden"></div>
+  </section>
+
+  <section id="teacher" class="page hidden">
+    <h1>Teacher's corner</h1>
+    <p class="muted">Create a quiz for your students. Add as many questions as you need.</p>
+
+    <div class="panel">
+      <form id="quiz-form">
+        <label for="quiz-title">Quiz title</label>
+        <input id="quiz-title" required maxlength="70" placeholder="e.g. Introduction to Programming">
+
+        <div class="row" style="margin-top:24px">
+          <h3 style="margin:0">Questions</h3>
+          <span class="badge" id="question-count">0 questions added</span>
+        </div>
+
+        <div id="question-list"></div>
+
+        <div class="question-box">
+          <h4>Add a question</h4>
+          <label for="new-question">Question</label>
+          <input id="new-question" placeholder="Type your question here">
+
+          <div class="form-grid">
+            <div>
+              <label for="opt1">Choice A</label>
+              <input id="opt1" placeholder="First answer">
+            </div>
+            <div>
+              <label for="opt2">Choice B</label>
+              <input id="opt2" placeholder="Second answer">
+            </div>
+            <div>
+              <label for="opt3">Choice C</label>
+              <input id="opt3" placeholder="Third answer">
+            </div>
+            <div>
+              <label for="opt4">Choice D</label>
+              <input id="opt4" placeholder="Fourth answer">
+            </div>
+          </div>
+
+          <label for="correct-answer">Correct answer</label>
+          <select id="correct-answer">
+            <option value="0">Choice A</option>
+            <option value="1">Choice B</option>
+            <option value="2">Choice C</option>
+            <option value="3">Choice D</option>
+          </select>
+          <button class="outline" type="button" id="add-question" style="margin-top:15px">+ Add question</button>
+        </div>
+
+        <label for="review-setting">Allow students to review answers?</label>
+        <select id="review-setting">
+          <option value="yes">Yes, show correct answers</option>
+          <option value="no">No, scores only</option>
+        </select>
+        <button class="primary" type="submit" style="margin-top:20px">Create quiz</button>
+      </form>
+      <div id="created-message" class="notice hidden"></div>
+    </div>
+
+    <h2 class="section-title">Your quizzes</h2>
+    <div id="teacher-quizzes" class="grid"></div>
+  </section>
+
+  <section id="admin" class="page hidden">
+    <h1>Admin area</h1>
+    <p class="muted">Basic overview of the quizzes saved in this browser.</p>
+    <div class="grid">
+      <div class="card">
+        <p>Total quizzes</p>
+        <h2 id="total-quizzes">0</h2>
+      </div>
+      <div class="card">
+        <p>Questions created</p>
+        <h2 id="total-questions">0</h2>
+      </div>
+      <div class="card">
+        <p>Recorded attempts</p>
+        <h2 id="total-attempts">0</h2>
+      </div>
+    </div>
+    <div class="panel">
+      <h3>Quiz records</h3>
+      <div id="admin-list"></div>
+    </div>
+    <div class="notice">Demo mode: this page has no real administrator login. Do not use it to store private or sensitive information.</div>
+  </section>
+</main>
+
+<footer>QuizIt Learning System · A student project prototype</footer>
+
+<script>
+const STORAGE_KEY = "quizit_quizzes_v1";
+const RESULT_KEY = "quizit_results_v1";
+
+function load(key, fallback) {
+  try {
+    const data = localStorage.getItem(key);
+    return data ? JSON.parse(data) : fallback;
+  } catch (error) {
+    return fallback;
+  }
+}
+
+let quizzes = load(STORAGE_KEY, null);
+let results = load(RESULT_KEY, []);
+let draftQuestions = [];
+let currentQuiz = null;
+let currentQuestion = 0;
+let currentScore = 0;
+let currentStudent = "";
+let answered = false;
+
+if (!quizzes) {
+  quizzes = [{
+    id: "sample-quiz",
+    title: "Getting Started with QuizIt",
+    code: "QUIZ01",
+    review: true,
+    questions: [
+      {
+        question: "Which language is used to style a web page?",
+        options: ["HTML", "CSS", "PHP", "SQL"],
+        correct: 1
+      },
+      {
+        question: "What does HTML stand for?",
+        options: [
+          "HyperText Markup Language",
+          "HighText Machine Language",
+          "Home Tool Markup Language",
+          "Hyper Transfer Main Link"
+        ],
+        correct: 0
+      },
+      {
+        question: "Which language can make a website interactive?",
+        options: ["CSS", "SQL", "JavaScript", "XML"],
+        correct: 2
+      }
+    ]
+  }];
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(quizzes));
+}
+
+function saveQuizzes() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(quizzes));
+}
+
+function showPage(page) {
+  document.querySelectorAll(".page").forEach(section => {
+    section.classList.toggle("hidden", section.id !== page);
+  });
+  document.querySelectorAll("nav button").forEach(button => {
+    button.classList.toggle("active", button.dataset.page === page);
+  });
+  if (page === "teacher") renderTeacherQuizzes();
+  if (page === "admin") renderAdmin();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+document.querySelectorAll("nav button").forEach(button => {
+  button.addEventListener("click", () => showPage(button.dataset.page));
+});
+
+function makeCode() {
+  let code;
+  do {
+    code = Math.random().toString(36).substring(2, 8).toUpperCase();
+  } while (quizzes.some(quiz => quiz.code === code));
+  return code;
+}
+
+function escapeHTML(value) {
+  return String(value).replace(/[&<>"']/g, char => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[char]);
+}
+
+document.getElementById("add-question").addEventListener("click", () => {
+  const question = document.getElementById("new-question").value.trim();
+  const options = [1, 2, 3, 4].map(i =>
+    document.getElementById("opt" + i).value.trim()
+  );
+  const correct = Number(document.getElementById("correct-answer").value);
+
+  if (!question || options.some(option => !option)) {
+    alert("Please fill in the question and all four choices.");
+    return;
+  }
+
+  draftQuestions.push({ question, options, correct });
+  document.getElementById("question-list").innerHTML =
+    draftQuestions.map((q, i) => `
+      <div class="question-box">
+        <div class="row">
+          <strong>${i + 1}. ${escapeHTML(q.question)}</strong>
+          <button type="button" class="outline" onclick="removeQuestion(${i})">Remove</button>
+        </div>
+        <p class="muted">${q.options.map(escapeHTML).join(" · ")}</p>
+      </div>
+    `).join("");
+
+  document.getElementById("question-count").textContent =
+    draftQuestions.length + (draftQuestions.length === 1 ? " question added" : " questions added");
+
+  document.getElementById("new-question").value = "";
+  [1, 2, 3, 4].forEach(i => {
+    document.getElementById("opt" + i).value = "";
+  });
+});
+
+function removeQuestion(index) {
+  draftQuestions.splice(index, 1);
+  document.getElementById("question-list").innerHTML =
+    draftQuestions.map((q, i) => `
+      <div class="question-box">
+        <div class="row">
+          <strong>${i + 1}. ${escapeHTML(q.question)}</strong>
+          <button type="button" class="outline" onclick="removeQuestion(${i})">Remove</button>
+        </div>
+        <p class="muted">${q.options.map(escapeHTML).join(" · ")}</p>
+      </div>
+    `).join("");
+  document.getElementById("question-count").textContent =
+    draftQuestions.length + (draftQuestions.length === 1 ? " question added" : " questions added");
+}
+
+document.getElementById("quiz-form").addEventListener("submit", event => {
+  event.preventDefault();
+
+  if (draftQuestions.length === 0) {
+    alert("Add at least one question before creating the quiz.");
+    return;
+  }
+
+  const quiz = {
+    id: Date.now().toString(),
+    title: document.getElementById("quiz-title").value.trim(),
+    code: makeCode(),
+    review: document.getElementById("review-setting").value === "yes",
+    questions: [...draftQuestions]
+  };
+
+  quizzes.push(quiz);
+  saveQuizzes();
+
+  const message = document.getElementById("created-message");
+  message.classList.remove("hidden");
+  message.innerHTML = `
+    <strong>Your quiz has been created!</strong><br>
+    Quiz code: <strong>${quiz.code}</strong><br>
+    Share this code with your students so they can join.
+  `;
+
+  document.getElementById("quiz-title").value = "";
+  draftQuestions = [];
+  document.getElementById("question-list").innerHTML = "";
+  document.getElementById("question-count").textContent = "0 questions added";
+  renderTeacherQuizzes();
+});
+
+document.getElementById("join-form").addEventListener("submit", event => {
+  event.preventDefault();
+
+  currentStudent = document.getElementById("student-name").value.trim();
+  const code = document.getElementById("join-code").value.trim().toUpperCase();
+
+  if (!currentStudent) return;
+
+  currentQuiz = quizzes.find(quiz => quiz.code === code);
+  if (!currentQuiz) {
+    alert("Quiz code not found. Please check the code and try again.");
+    return;
+  }
+
+  currentQuestion = 0;
+  currentScore = 0;
+  answered = false;
+  document.getElementById("join-panel").classList.add("hidden");
+  document.getElementById("quiz-area").classList.remove("hidden");
+  renderQuestion();
+});
+
+function renderQuestion() {
+  const area = document.getElementById("quiz-area");
+
+  if (currentQuestion >= currentQuiz.questions.length) {
+    showResults();
+    return;
+  }
+
+  answered = false;
+  const q = currentQuiz.questions[currentQuestion];
+
+  area.innerHTML = `
+    <span class="badge">QUESTION ${currentQuestion + 1} OF ${currentQuiz.questions.length}</span>
+    <h2>${escapeHTML(currentQuiz.title)}</h2>
+    <h3>${escapeHTML(q.question)}</h3>
+    <div id="answer-list">
+      ${q.options.map((option, i) => `
+        <button class="answer" data-answer="${i}">
+          ${String.fromCharCode(65 + i)}. ${escapeHTML(option)}
+        </button>
+      `).join("")}
+    </div>
+    <p id="answer-feedback" class="muted"></p>
+    <button id="next-question" class="primary hidden">
+      ${currentQuestion === currentQuiz.questions.length - 1 ? "See results" : "Next question →"}
+    </button>
+  `;
+
+  area.querySelectorAll("[data-answer]").forEach(button => {
+    button.addEventListener("click", () => chooseAnswer(Number(button.dataset.answer)));
+  });
+
+  document.getElementById("next-question").addEventListener("click", () => {
+    currentQuestion++;
+    renderQuestion();
+  });
+}
+
+function chooseAnswer(choice) {
+  if (answered) return;
+  answered = true;
+
+  const q = currentQuiz.questions[currentQuestion];
+  const correct = choice === q.correct;
+  if (correct) currentScore++;
+
+  document.querySelectorAll("[data-answer]").forEach((button, index) => {
+    button.disabled = true;
+    if (index === q.correct) button.classList.add("correct");
+    else if (index === choice) button.classList.add("wrong");
+  });
+
+  document.getElementById("answer-feedback").textContent = correct
+    ? "Correct! Good job."
+    : "Not quite. The correct answer is " + q.options[q.correct] + ".";
+
+  document.getElementById("next-question").classList.remove("hidden");
+}
+
+function showResults() {
+  const area = document.getElementById("quiz-area");
+  const percentage = Math.round(currentScore / currentQuiz.questions.length * 100);
+
+  results.push({
+    name: currentStudent,
+    title: currentQuiz.title,
+    code: currentQuiz.code,
+    score: currentScore,
+    total: currentQuiz.questions.length,
+    percentage,
+    date: new Date().toLocaleDateString()
+  });
+  localStorage.setItem(RESULT_KEY, JSON.stringify(results));
+
+  const reviewHTML = currentQuiz.review
+    ? `<hr><h3>Answer review</h3>` + currentQuiz.questions.map((q, i) => `
+        <div class="question-box">
+          <strong>${i + 1}. ${escapeHTML(q.question)}</strong>
+          <p class="muted">Correct answer: ${escapeHTML(q.options[q.correct])}</p>
+        </div>
+      `).join("")
+    : `<p class="muted">Your teacher has turned off answer review.</p>`;
+
+  area.innerHTML = `
+    <div style="text-align:center;padding:15px 0">
+      <div style="font-size:55px">🏆</div>
+      <h2>Quiz completed!</h2>
+      <p>Nice work, ${escapeHTML(currentStudent)}.</p>
+      <h1 style="color:var(--purple);font-size:42px">${currentScore}/${currentQuiz.questions.length}</h1>
+      <p>You scored ${percentage}%.</p>
+    </div>
+    ${reviewHTML}
+    <h3>Leaderboard</h3>
+    <div id="leaderboard"></div>
+    <button class="primary" id="back-to-join" style="margin-top:20px">Join another quiz</button>
+  `;
+
+  const board = results
+    .filter(result => result.code === currentQuiz.code)
+    .sort((a, b) => b.score - a.score);
+
+  document.getElementById("leaderboard").innerHTML = board.map((result, i) => `
+    <div class="row" style="padding:10px;border-bottom:1px solid #eeeaf4">
+      <span>${i + 1}. ${escapeHTML(result.name)}</span>
+      <strong>${result.score}/${result.total}</strong>
+    </div>
+  `).join("");
+
+  document.getElementById("back-to-join").addEventListener("click", () => {
+    document.getElementById("join-form").reset();
+    document.getElementById("quiz-area").classList.add("hidden");
+    document.getElementById("join-panel").classList.remove("hidden");
+    currentQuiz = null;
+  });
+}
+
+function renderTeacherQuizzes() {
+  const container = document.getElementById("teacher-quizzes");
+
+  if (quizzes.length === 0) {
+    container.innerHTML = '<div class="card">No quizzes yet. Create your first quiz above.</div>';
+    return;
+  }
+
+  container.innerHTML = quizzes.map(quiz => `
+    <div class="card">
+      <span class="badge">${quiz.code}</span>
+      <h3>${escapeHTML(quiz.title)}</h3>
+      <p>${quiz.questions.length} question(s)</p>
+      <button class="outline" onclick="copyCode('${quiz.code}')">Copy code</button>
+      <button class="outline" onclick="deleteQuiz('${quiz.id}')" style="margin-top:8px">Delete</button>
+    </div>
+  `).join("");
+}
+
+function copyCode(code) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(code)
+      .then(() => alert("Quiz code copied: " + code))
+      .catch(() => prompt("Copy this quiz code:", code));
+  } else {
+    prompt("Copy this quiz code:", code);
+  }
+}
+
+function deleteQuiz(id) {
+  if (!confirm("Delete this quiz?")) return;
+  quizzes = quizzes.filter(quiz => quiz.id !== id);
+  saveQuizzes();
+  renderTeacherQuizzes();
+  renderAdmin();
+}
+
+function renderAdmin() {
+  document.getElementById("total-quizzes").textContent = quizzes.length;
+  document.getElementById("total-questions").textContent =
+    quizzes.reduce((sum, quiz) => sum + quiz.questions.length, 0);
+  document.getElementById("total-attempts").textContent = results.length;
+
+  const container = document.getElementById("admin-list");
+
+  if (quizzes.length === 0) {
+    container.innerHTML = "<p class='muted'>No quizzes have been created.</p>";
+    return;
+  }
+
+  container.innerHTML = `
+    <table>
+      <thead><tr><th>Quiz title</th><th>Code</th><th>Questions</th></tr></thead>
+      <tbody>${quizzes.map(quiz => `
+        <tr>
+          <td>${escapeHTML(quiz.title)}</td>
+          <td><span class="badge">${quiz.code}</span></td>
+          <td>${quiz.questions.length}</td>
+        </tr>
+      `).join("")}</tbody>
+    </table>
+  `;
+}
+
+renderTeacherQuizzes();
+renderAdmin();
+</script>
+</body>
+</html>
